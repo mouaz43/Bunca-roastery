@@ -1,0 +1,30 @@
+<div class="card">
+  <div class="h1">Admin Dashboard</div>
+  <p class="p">Übersicht für die Rösterei.</p>
+
+  <div class="hint">
+    <div><strong>Gesamt Bestellungen:</strong> <%= stats.totalOrders %></div>
+    <div><strong>Offen:</strong> <%= stats.openOrders %></div>
+    <div><strong>In Arbeit:</strong> <%= stats.inWorkOrders %></div>
+  </div>
+</div>
+
+<div style="height:14px;"></div>
+
+<div class="card">
+  <div class="h1">Letzte Bestellungen</div>
+  <p class="p">Aktivitäten (max. 20).</p>
+
+  <% if (!latest || !latest.length) { %>
+    <div class="hint">Noch keine Bestellungen vorhanden.</div>
+  <% } else { %>
+    <div class="hint">
+      <% latest.forEach(o => { %>
+        <div style="padding:10px 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
+          <div><strong>#<%= o.id %></strong> — <span class="muted"><%= o.customer_label %></span> (<%= o.customer_type %>)</div>
+          <div class="muted">Status: <%= o.status %> — <%= o.created_at %></div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
