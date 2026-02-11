@@ -1,0 +1,26 @@
+<div class="card">
+  <div class="h1">Login</div>
+  <p class="p">Bitte melde dich an, um fortzufahren.</p>
+
+  <form class="form" method="post" action="/login">
+    <label class="label">
+      Benutzername
+      <input class="input" type="text" name="username" autocomplete="username" required />
+    </label>
+
+    <label class="label">
+      Passwort
+      <input class="input" type="password" name="password" autocomplete="current-password" required />
+    </label>
+
+    <button class="btn btn-primary" type="submit">Anmelden</button>
+
+    <% if (error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+    <div class="hint">
+      Testzugänge (nach Seed): admin / admin123, filiale1 / branch123, b2b1 / b2b123
+    </div>
+  </form>
+</div>
