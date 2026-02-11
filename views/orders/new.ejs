@@ -1,0 +1,36 @@
+<section class="card">
+  <div class="h1">Neue Bestellung</div>
+  <p class="p">Schnell eine Bestellung anlegen (Tablet-freundlich).</p>
+
+  <form class="form" method="post" action="/orders/new">
+    <label class="label">
+      Produkt
+      <input class="input" name="product" placeholder="z. B. Espresso Blend" />
+    </label>
+
+    <label class="label">
+      Größe
+      <select class="input" name="size">
+        <option value="1kg">1kg</option>
+        <option value="5kg">5kg</option>
+        <option value="11kg">11kg</option>
+      </select>
+    </label>
+
+    <label class="label">
+      Menge
+      <input class="input" type="number" name="qty" min="1" value="1" />
+    </label>
+
+    <label class="label">
+      Notiz (optional)
+      <input class="input" name="notes" placeholder="z. B. dringend bis Freitag" />
+    </label>
+
+    <button class="btn btn-primary" type="submit">Bestellung speichern</button>
+
+    <% if (error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+  </form>
+</section>
