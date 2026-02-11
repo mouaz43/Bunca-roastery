@@ -1,46 +1,40 @@
-const fs = require("fs");
+// db.js
 const path = require("path");
 const Database = require("better-sqlite3");
 
-function ensureDir(filePath) {
-  const dir = path.dirname(filePath);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-}
+const dbFile = path.join(__dirname, "data.sqlite");
+const db = new Database(dbFile);
 
-function openDb() {
-  const dbPath = process.env.DB_PATH || "./data/app.db";
-  ensureDir(dbPath);
+// Create tables (minimal but useful)
+db.exec(`
+  PRAGMA journal_mode = WAL;
 
-  const db = new Database(dbPath);
-  db.pragma("journal_mode = WAL");
-  return db;
-}
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL CHECK (role IN ('branch','b2b','admin')),
+    label TEXT
+  );
 
-function migrate(db) {
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT NOT NULL UNIQUE,
-      password_hash TEXT NOT NULL,
-      role TEXT NOT NULL CHECK(role IN ('branch', 'b2b', 'admin')),
-      label TEXT,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
+  CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    created_by INTEGER NOT NULL,
+    customer_label TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'offen' CHECK (status IN ('offen','in_arbeit','versandt','abgeschlossen')),
+    notes TEXT,
+    FOREIGN KEY(created_by) REFERENCES users(id)
+  );
 
-    CREATE TABLE IF NOT EXISTS orders (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
-      customer_type TEXT NOT NULL CHECK(customer_type IN ('branch', 'b2b')),
-      customer_label TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'offen' CHECK(status IN ('offen','in_arbeit','versandt','abgeschlossen')),
-      notes TEXT,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      FOREIGN KEY(user_id) REFERENCES users(id)
-    );
+  CREATE TABLE IF NOT EXISTS order_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id INTEGER NOT NULL,
+    product TEXT NOT NULL,
+    size TEXT NOT NULL,           -- e.g. '1kg' / '5kg' / '11kg'
+    qty INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY(order_id) REFERENCES orders(id)
+  );
+`);
 
-    CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
-    CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
-  `);
-}
-
-module.exports = { openDb, migrate };
+module.exports = db;
