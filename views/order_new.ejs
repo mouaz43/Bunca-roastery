@@ -1,0 +1,17 @@
+<div class="card">
+  <div class="h1">Neue Bestellung</div>
+  <p class="p">Kurz notieren, was bestellt werden soll. (MVP)</p>
+
+  <form class="form" method="post" action="/orders/new">
+    <label class="label">
+      Notiz / Bestellung
+      <input class="input" type="text" name="notes" placeholder="z.B. 5x 1kg Espresso Blend, Lieferung Freitag" required />
+    </label>
+
+    <button class="btn btn-primary" type="submit">Bestellung speichern</button>
+
+    <% if (error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+  </form>
+</div>
