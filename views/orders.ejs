@@ -1,0 +1,17 @@
+<div class="card">
+  <div class="h1">Meine Bestellungen</div>
+  <p class="p">Letzte Bestellungen (max. 50).</p>
+
+  <% if (!orders || !orders.length) { %>
+    <div class="hint">Noch keine Bestellungen vorhanden.</div>
+  <% } else { %>
+    <div class="hint">
+      <% orders.forEach(o => { %>
+        <div style="padding:10px 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
+          <div><strong>#<%= o.id %></strong> — <span class="muted"><%= o.customer_label %></span></div>
+          <div class="muted">Status: <%= o.status %> — <%= o.created_at %></div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
